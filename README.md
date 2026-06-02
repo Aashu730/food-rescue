@@ -1,2 +1,2 @@
-# food-rescue
-a simple web application to post, claim and track surplus food donations. Features real‑time Firebase backend, live driver tracking with Leaflet/geolocation, NGO audit CSV export, and role-based flows for donors, NGOs and restaurants
+Waste Food Management — donate, claim and track surplus food in real time.
+Web app with Firebase backend, live tracking (Leaflet), NGO CSV export, and role-based flows.
