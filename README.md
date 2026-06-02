@@ -26,6 +26,10 @@ Files of interest:
 - `core.min.js` — bundled jQuery
 - `AI_scan_summary.html` — automated scan summary
 
+Repository screenshot:
+
+![Repo Screenshot](repo_screenshot.png)
+
 How to publish to GitHub:
 - Initialize git and commit (I did this locally if you asked me to), then create a repository on GitHub and push:
 
