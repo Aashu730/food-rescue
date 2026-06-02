@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Registration Step 3 - Recycling Lives</title>
+    
+    <link rel="icon" href="images/logoicon.svg" type="image/x-icon">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    
+    <!-- Custom Premium CSS -->
+    <link rel="stylesheet" href="css/msc-premium.css">
+
+    <style>
+        .registration-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        .registration-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .back-btn:hover {
+            opacity: 1;
+            color: #fff;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.active {
+            background: var(--primary-color);
+            transform: scale(1.2);
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+        
+        .step-dot.completed {
+            background: var(--primary-color);
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body class="bg-dark">
+    <!-- Back Button -->
+    <a href="registration2.html" class="back-btn fade-in-up">
+        <i class="bi bi-arrow-left"></i> Back to Step 2
+    </a>
+
+    <div class="registration-container fade-in-up delay-1">
+        <div class="registration-card">
+            <div class="text-center mb-4">
+                <div class="step-indicator">
+                    <div class="step-dot completed"></div>
+                    <div class="step-dot completed"></div>
+                    <div class="step-dot active"></div>
+                </div>
+                <h2 class="fw-bold text-white mb-2">Delivery Address</h2>
+                <p class="text-secondary small">Step 3 of 3: Location Details</p>
+            </div>
+
+            <div class="mb-3">
+                <input type="text" class="form-control form-input" id="address" placeholder="Street Address" name="address" required>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-6">
+                    <input type="text" class="form-control form-input" id="city" placeholder="City" name="city" required>
+                </div>
+                <div class="col-6">
+                    <input type="text" class="form-control form-input" id="State" placeholder="State" name="country" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <input type="text" class="form-control form-input" id="zipcode" placeholder="Zip Code (6 digits)" name="zipcode" pattern="[0-9]{6}" title="Six digit zip code" required>
+            </div>
+
+            <div class="mb-4">
+                <input type="text" class="form-control form-input" id="mark" placeholder="Any particular landmarks (optional)" name="mark">
+            </div>
+
+            <button class="btn-premium w-100" id="saveData">
+                Complete Registration <i class="bi bi-check-circle ms-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Javascript -->
+    <script>
+        if(!sessionStorage.getItem("role")){
+            alert("Please fill up the entire registration form!");
+            window.location.href = "registration.html";
+        }else{
+            var zipcodeFormate = /(^\d{6}$)|(^\d{6}-\d{4}$)/;
+            document.getElementById("saveData").onclick = async function () {
+                var output = "";
+                var address = document.getElementById("address").value;
+                var city = document.getElementById("city").value;
+                var state = document.getElementById("State").value;
+                var zipcode = document.getElementById("zipcode").value;
+                var mark = document.getElementById("mark").value;
+                
+                if (address == "" || city == "" || state == "" || zipcode == "") {
+                    alert("Please fill up the entire form!");
+                } else {
+                    if (!zipcode.match(zipcodeFormate)) {
+                        alert("Please enter a valid zipcode!");
+                    } else {
+                        if (mark == "") {
+                            output = "default";
+                        } else {
+                            output = mark;
+                        }
+
+                        try {
+                            var response = await fetch("api/register.php", {
+                                method: "POST",
+                                headers: {"Content-Type": "application/json"},
+                                body: JSON.stringify({
+                                    role: sessionStorage.getItem("role"),
+                                    username: sessionStorage.getItem("username"),
+                                    mnumber: sessionStorage.getItem("mnumber"),
+                                    email: sessionStorage.getItem("email"),
+                                    password: sessionStorage.getItem("password"),
+                                    region: sessionStorage.getItem("region"),
+                                    address: address,
+                                    city: city,
+                                    state: state,
+                                    zipcode: zipcode,
+                                    mark: output
+                                })
+                            });
+
+                            var result = await response.json();
+                            if (result.success) {
+                                alert("Dear " + sessionStorage.getItem("username") + ", you have successfully registered!");
+                                sessionStorage.removeItem("email");
+                                sessionStorage.removeItem("password");
+                                sessionStorage.removeItem("region");
+                                window.location.href = "index.html";
+                            } else {
+                                alert(result.message || "Registration failed. Please try again.");
+                            }
+                        } catch (error) {
+                            console.error(error);
+                            alert("Unable to complete registration. Please try again later.");
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

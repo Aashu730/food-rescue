@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Registration Step 1 - Recycling Lives</title>
+    
+    <link rel="icon" href="images/logoicon.svg" type="image/x-icon">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    
+    <!-- Custom Premium CSS -->
+    <link rel="stylesheet" href="css/msc-premium.css">
+
+    <style>
+        .registration-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        .registration-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .back-btn:hover {
+            opacity: 1;
+            color: #fff;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.active {
+            background: var(--primary-color);
+            transform: scale(1.2);
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+    </style>
+</head>
+
+<body class="bg-dark">
+    <!-- Back Button -->
+    <a href="index.html" class="back-btn fade-in-up">
+        <i class="bi bi-arrow-left"></i> Back to Home
+    </a>
+
+    <div class="registration-container fade-in-up delay-1">
+        <div class="registration-card">
+            <div class="text-center mb-4">
+                <div class="step-indicator">
+                    <div class="step-dot active"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                </div>
+                <h2 class="fw-bold text-white mb-2">Create Account</h2>
+                <p class="text-secondary small">Step 1 of 3: Essential Information</p>
+            </div>
+
+            <div class="mb-4">
+                <select class="form-control form-input" id="inlineFormCustomSelectPref" required>
+                    <option value="" disabled selected>Who are you?</option>
+                    <option value="Admin">Admin</option>
+                    <option value="NGO">NGO</option>
+                    <option value="Household">Household Donor (Individuals / Families)</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <input type="text" class="form-control form-input" id="number" placeholder="Phone Number (10 digits)" name="number" pattern="[7-9]{1}[0-9]{9}" title="Phone number starting with 7-9 and 9 remaining digits" required>
+            </div>
+
+            <div class="mb-4">
+                <input type="email" class="form-control form-input" id="email" placeholder="Email Address" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" required>
+            </div>
+
+            <div class="mb-4">
+                <input type="password" class="form-control form-input" id="password" placeholder="Set a Password" name="password" pattern=".{6,}" title="Minimum 6 characters." required>
+            </div>
+
+            <button class="btn-premium w-100 mt-2" id="nxtBtn">
+                Continue to Profile <i class="bi bi-arrow-right ms-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Javascript -->
+    <script>
+        var numberFomrate = /^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/;
+        var emailFormate = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        var pwdFormate = /.{6,}/;
+        
+        if(sessionStorage.getItem("role")!=null){
+            document.getElementById("inlineFormCustomSelectPref").value = sessionStorage.getItem("role");
+            document.getElementById("number").value = sessionStorage.getItem("mnumber");
+            document.getElementById("email").value = sessionStorage.getItem("email");
+            document.getElementById("password").value = sessionStorage.getItem("password");
+        }
+        
+        document.getElementById("nxtBtn").onclick = async function () {
+            var role = document.getElementById("inlineFormCustomSelectPref").value;
+            var mNumber = document.getElementById("number").value;
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+            
+            if (role == "") {
+                alert("Please select your role!");
+            } else if (mNumber == "" && email == "" && password == "") {
+                alert("Please fill up the entire form!");
+            } else {
+                if (!mNumber.match(numberFomrate)) {
+                    alert("Please enter a valid mobile number!");
+                } else if (!email.match(emailFormate)) {
+                    alert("Please enter a valid email address!");
+                } else if (!password.match(pwdFormate)) {
+                    alert("Password must be at least 6 characters long.");
+                } else {
+                    try {
+                        var mobileResponse = await fetch("api/validate.php?type=mobile&value=" + encodeURIComponent(mNumber));
+                        var mobileData = await mobileResponse.json();
+                        if (mobileData.exists) {
+                            alert("Mobile number already registered!");
+                            return;
+                        }
+                        var emailResponse = await fetch("api/validate.php?type=email&value=" + encodeURIComponent(email));
+                        var emailData = await emailResponse.json();
+                        if (emailData.exists) {
+                            alert("Email address already registered!");
+                            return;
+                        }
+
+                        sessionStorage.setItem("role", role);
+                        sessionStorage.setItem("mnumber", mNumber);
+                        sessionStorage.setItem("email", email);
+                        sessionStorage.setItem("password", password);
+                        window.location.href = "registration2.html";
+                    } catch (error) {
+                        console.error(error);
+                        alert("Unable to validate the user. Please try again later.");
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Accept Donation - Recycling Lives</title>
+    
+    <link rel="icon" href="images/logoicon.svg" type="image/x-icon">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    
+    <!-- Custom Premium CSS -->
+    <link rel="stylesheet" href="css/msc-premium.css">
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+    <script src="js/config.js"></script>
+
+    <style>
+        .delivery-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        .delivery-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .back-btn:hover {
+            opacity: 1;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body class="bg-dark">
+    <!-- Back Button -->
+    <a href="feed.html" class="back-btn fade-in-up">
+        <i class="bi bi-arrow-left"></i> Cancel
+    </a>
+
+    <div class="delivery-container fade-in-up delay-1">
+        <div class="delivery-card">
+            <div class="text-center mb-4">
+                <i class="bi bi-truck text-gradient mb-3" style="font-size: 3rem;"></i>
+                <h2 class="fw-bold text-white mb-2">Delivery <span class="text-gradient">Information</span></h2>
+                <p class="text-secondary small">Enter the details of the delivery person who will pick up the food</p>
+            </div>
+
+            <div class="mb-4">
+                <label class="text-secondary small mb-1">Driver's Name</label>
+                <input type="text" class="form-control form-input" id="Dname" placeholder="Full Name" required>
+            </div>
+
+            <div class="mb-5">
+                <label class="text-secondary small mb-1">Driver's Contact Number</label>
+                <input type="tel" class="form-control form-input" id="Dnumber" placeholder="10 Digit Number" required>
+            </div>
+
+            <button class="btn-premium w-100" id="Save">
+                Confirm Pickup <i class="bi bi-check2-circle ms-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Backend JS -->
+    <script src="js/feed2.js"></script>
+</body>
+</html>

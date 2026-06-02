@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Restaurant Caterer</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="icon" href="images/logoicon.svg" type="image/x-icon">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="js/config.js"></script>
+
+    <link rel="stylesheet" href="css/msc-premium.css">
+    
+    <style>
+        .profile-container {
+            min-height: 100vh;
+            padding: 100px 0 50px 0;
+            position: relative;
+        }
+
+        .profile-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .donation-list-card {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .itm {
+            color: #f8fafc;
+        }
+
+        .table td {
+            color: #f8fafc;
+        }
+        
+        .fw-bold {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+
+<body class="bg-dark">
+    <!-- Premium Navbar -->
+    <nav class="premium-navbar">
+        <div class="nav-container">
+            <a href="index.html" class="brand-logo">
+                <i class="bi bi-box2-heart text-gradient"></i> RecyclingLives
+            </a>
+            <ul class="nav-links d-none d-md-flex">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="feed.html">Feed</a></li>
+            </ul>
+            <div class="nav-actions d-flex align-items-center gap-3">
+                <div class="position-relative" style="cursor: pointer;" id="notificationBell">
+                    <i class="bi bi-bell-fill fs-5 text-white"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" id="notifBadge" style="display: none;">
+                        <span class="visually-hidden">New alerts</span>
+                    </span>
+                </div>
+                <a href="index.html" class="btn-glass"><i class="bi bi-arrow-left me-2"></i>Go Back</a>
+            </div>
+        </div>
+    </nav>
+
+  <section class="profile-container fade-in-up delay-1">
+    <div class="container">
+        <!-- Header Profile Card -->
+        <div class="profile-card text-center">
+            <h1 class="fw-bold fs-1 mb-2 text-white" id="rcname">Donor Profile</h1>
+            <p class="text-secondary fs-5 mb-4">Location / Area</p>
+            <div class="d-flex justify-content-center">
+                <a href="EditProfile.html" class="btn-premium">
+                    <i class="bi bi-pencil-square me-2"></i> Edit Profile
+                </a>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-lg-4 col-md-12">
+                <div class="stat-card">
+                    <div class="stat-number" id="nof">00</div>
+                    <div class="stat-label">People Fed</div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-12">
+                <div class="stat-card">
+                    <div class="stat-number" id="nodd">00</div>
+                    <div class="stat-label">Deliveries Completed</div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-12">
+                <div class="stat-card">
+                    <div class="stat-number" id="nofd">00</div>
+                    <div class="stat-label">Failed Deliveries</div>
+                </div>
+            </div> 
+        </div>
+
+        <!-- Donations Table Area -->
+        <div class="profile-card">
+            <h3 class="text-white mb-4 border-bottom border-secondary pb-3"><i class="bi bi-list-ul me-2 text-gradient"></i> Your Donation History</h3>
+            <div id="ex-table">
+                <!-- Data populated by JS -->
+            </div>
+        </div>
+    </div>
+  </section>
+
+    <footer class="section footer-classic small" id="footer">
+        <div class="container">
+          <div class="row row-30">
+            <div class="col-xs-7 col-md-5">
+              <h4 class="footer-title">Contact us</h4>
+              <ul class="list">
+              </ul>
+              <ul class="list">
+                <li>E: <a href="mailto:#">recyclinglivesofficial@gmail.com</a>
+                </li>
+              </ul>
+            </div>
+            <div class="col-xs-5 col-md-2 col-lg-3">
+              <h4 class="footer-title">Socials</h4>
+              <ul class="list-md">
+                <li><a class="link-secondary" href="#">Facebook</a></li>
+                <li><a class="link-secondary" href="#">Instagram</a></li>
+                <li><a class="link-secondary" href="#">Twitter</a></li>
+              </ul>
+            </div>
+            <div class="col-md-5 col-lg-4">
+              <h4 class="footer-title">Link</h4>
+              <ul class="list-md">
+                <li><a class="link-secondary" href="index.html">Home</a></li>
+                <li><a class="link-secondary" href="about.html">About</a></li>
+                <li><a class="link-secondary" href="feed.html">Feed</a></li>
+              </ul>
+            </div>
+          </div>
+          <p class="rights"><span>&copy;&nbsp;</span><span class="copyright-year"></span><span>&nbsp;</span><span>Recycling Lives</span><span>.&nbsp;</span><a class="link-secondary" href="#">Privacy Policy</a></p>
+        </div>
+    </footer>
+
+    <script src="js/RestaurantCaterer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
+</body>
+</html>
